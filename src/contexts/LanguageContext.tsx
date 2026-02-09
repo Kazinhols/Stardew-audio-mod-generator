@@ -132,16 +132,34 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('sdv-audio-mod-language');
-    if (saved === 'en' || saved === 'pt') return saved;
-    // Detect browser language
-    const browserLang = navigator.language.toLowerCase();
-    return browserLang.startsWith('pt') ? 'pt' : 'en';
+    // Safe check for browser environment
+    if (typeof window === 'undefined') return 'en';
+    
+    try {
+      const saved = localStorage.getItem('sdv-audio-mod-language');
+      if (saved === 'en' || saved === 'pt') return saved;
+      
+      // Detect browser language
+      if (navigator && navigator.language) {
+        const browserLang = navigator.language.toLowerCase();
+        return browserLang.startsWith('pt') ? 'pt' : 'en';
+      }
+    } catch (e) {
+      console.warn('Language detection error:', e);
+    }
+    
+    return 'en';
   });
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem('sdv-audio-mod-language', lang);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('sdv-audio-mod-language', lang);
+      }
+    } catch (e) {
+      console.warn('Failed to save language:', e);
+    }
   }, []);
 
   const t = useCallback((key: string): string => {
@@ -154,7 +172,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, [language]);
 
   useEffect(() => {
-    document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
+    }
   }, [language]);
 
   return (

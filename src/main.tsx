@@ -9,28 +9,32 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 function ErrorFallback({ error, resetErrorBoundary }: { error: unknown; resetErrorBoundary: () => void }) {
   return (
-    <div className="min-h-screen flex items-center justify-center p-8" style={{ background: '#3d2817' }}>
-      <div className="max-w-lg w-full bg-[#f8ecc2] border-4 border-[#8b4513] rounded-2xl p-8 text-center">
-        <h1 className="text-3xl text-[#e63e3e] mb-4">💥 Something went wrong</h1>
-        <pre className="text-left text-sm bg-gray-900 text-red-400 p-4 rounded-lg mb-4 overflow-auto max-h-48">
+    <div className="min-h-screen flex items-center justify-center p-8 bg-gray-900 text-white">
+      <div className="max-w-lg w-full bg-red-900/20 border-2 border-red-500 rounded-xl p-8 text-center shadow-2xl">
+        <h1 className="text-3xl font-bold text-red-400 mb-4">💥 Erro Crítico</h1>
+        <div className="bg-black/50 text-left p-4 rounded text-sm font-mono overflow-auto max-h-48 mb-6 border border-red-500/30">
           {error instanceof Error ? error.message : String(error)}
-        </pre>
+        </div>
         <button
           onClick={resetErrorBoundary}
-          className="px-6 py-3 bg-[#e07020] text-white rounded-lg text-xl hover:brightness-110 transition-all"
+          className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded font-bold transition-all"
         >
-          🔄 Try Again
+          🔄 Tentar Novamente
         </button>
       </div>
     </div>
   );
 }
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root');
+if (!rootElement) throw new Error('Failed to find the root element');
+
+createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
       <ThemeProvider>
         <LanguageProvider>
+          {}
           <AppProvider>
             <App />
           </AppProvider>

@@ -29,7 +29,21 @@
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
   </head>
-  <body>
+  <body style="background-color: #f0e6d2; margin: 0; padding: 0;">
+    <script>
+      // Apply theme immediately to prevent white flash
+      (function() {
+        try {
+          const theme = localStorage.getItem('sdv-audio-mod-theme');
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.body.style.backgroundColor = '#111827';
+          }
+        } catch (e) {
+          console.warn('Theme init error:', e);
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

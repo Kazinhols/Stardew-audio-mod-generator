@@ -12,17 +12,32 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    const saved = localStorage.getItem('sdv-audio-mod-theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+    // Safe check for browser environment
+    if (typeof window === 'undefined') return 'light';
+    
+    try {
+      const saved = localStorage.getItem('sdv-audio-mod-theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+    } catch (e) {
+      console.warn('Theme detection error:', e);
     }
+    
     return 'light';
   });
 
   const setTheme = useCallback((newTheme: Theme) => {
     setThemeState(newTheme);
-    localStorage.setItem('sdv-audio-mod-theme', newTheme);
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem('sdv-audio-mod-theme', newTheme);
+      }
+    } catch (e) {
+      console.warn('Failed to save theme:', e);
+    }
   }, []);
 
   const toggleTheme = useCallback(() => {
@@ -30,7 +45,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme, setTheme]);
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    if (typeof document !== 'undefined') {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
   }, [theme]);
 
   return (

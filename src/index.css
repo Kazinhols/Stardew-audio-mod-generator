@@ -17,19 +17,25 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  margin: 0;
+  padding: 0;
+}
+
 body {
+  margin: 0;
+  padding: 0;
   font-family: 'VT323', monospace;
-  background-color: var(--bg-color);
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%233d2817" width="40" height="40"/><circle fill="%234a3020" cx="20" cy="20" r="1"/></svg>');
+  background-color: #f0e6d2;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23f0e6d2" width="40" height="40"/><circle fill="%23e0d6c2" cx="20" cy="20" r="1"/></svg>');
   color: var(--text-color);
   min-height: 100vh;
 }
 
 /* Dark mode background */
-.dark body,
-body:has(.dark) {
-  background-color: #111827;
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23111827" width="40" height="40"/><circle fill="%231f2937" cx="20" cy="20" r="1"/></svg>');
+html.dark body {
+  background-color: #111827 !important;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23111827" width="40" height="40"/><circle fill="%231f2937" cx="20" cy="20" r="1"/></svg>') !important;
 }
 
 /* Custom scrollbar */

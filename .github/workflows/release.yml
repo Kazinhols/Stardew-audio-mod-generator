@@ -1,0 +1,115 @@
+name: Release Creation
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create-release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get-version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Stardew Audio Mod Generator v${{ steps.get-version.outputs.VERSION }}"
+          body: |
+            ## 🎵 Stardew Audio Mod Generator v${{ steps.get-version.outputs.VERSION }}
+
+            ### Downloads
+            | Plataforma | Arquivo |
+            |:---:|:---|
+            | 🪟 Windows (Instalador) | `.exe` |
+            | 🪟 Windows (MSI) | `.msi` |
+            | 🐧 Linux (Debian) | `.deb` |
+            | 🐧 Linux (Portátil) | `.AppImage` |
+
+            ---
+            _Release gerada automaticamente._
+          draft: true
+          prerelease: false
+
+  build-tauri:
+    needs: create-release
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-22.04
+            target: linux
+          - platform: windows-latest
+            target: windows
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install system dependencies (Linux)
+        if: matrix.target == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            libssl-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build Tauri App
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ needs.create-release.outputs.release_id }}
+
+  publish-release:
+    needs: [create-release, build-tauri]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish Release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: ${{ needs.create-release.outputs.release_id }},
+              draft: false
+            });

@@ -5,7 +5,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { cn } from '@/utils/cn';
 
 export const ExportTab = memo(function ExportTab() {
-  const { audios, assetsFolder } = useAppState();
+  const { audios, assetsFolder, modConfig } = useAppState();
   const tauri = useTauri();
   const { language } = useLanguage();
   const { theme } = useTheme();
@@ -16,11 +16,15 @@ export const ExportTab = memo(function ExportTab() {
   const [i18nJson, setI18nJson] = useState('{}');
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // Regenerate JSON previews when audios or config change
+  const audiosKey = JSON.stringify(audios.map(a => ({ id: a.id, f: a.files, l: a.looped, j: a.jukebox })));
+  const configKey = `${modConfig.modId}|${modConfig.modName}|${modConfig.modAuthor}|${modConfig.modVersion}`;
   useEffect(() => {
     tauri.getManifestJson().then(setManifestJson).catch(() => {});
     tauri.getContentJson().then(setContentJson).catch(() => {});
     tauri.getI18nJson().then(setI18nJson).catch(() => {});
-  }, [tauri, audios]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audiosKey, configKey]);
 
   const handleCopy = useCallback(async (text: string, field: string) => {
     await tauri.copyToClipboard(text);
@@ -59,7 +63,7 @@ export const ExportTab = memo(function ExportTab() {
 
   return (
     <div className="animate-fade-in space-y-4">
-      {}
+      {/* Header */}
       <div className={headerClass}>
         <h3 className={headerTitleClass}>
           {tauri.isDesktop 
@@ -84,7 +88,7 @@ export const ExportTab = memo(function ExportTab() {
         )}
       </div>
 
-      {}
+      {/* Copy audio option (desktop only) */}
       {tauri.isDesktop && (
         <div className={cn('p-4 rounded-xl border-2', theme === 'dark' ? 'bg-gray-700/50 border-gray-600' : 'bg-white/60 border-[#8b4513]/30')}>
           <label className={cn('flex items-center gap-3 cursor-pointer text-lg', theme === 'dark' ? 'text-white' : 'text-[#5c3d2e]')}>
@@ -104,7 +108,7 @@ export const ExportTab = memo(function ExportTab() {
         </div>
       )}
 
-      {}
+      {/* Action buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {tauri.isDesktop ? (
           <>

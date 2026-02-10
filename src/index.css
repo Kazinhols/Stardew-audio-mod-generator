@@ -1,77 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════
+   🎮 STARDEW VALLEY THEME — Pixel Art Inspired
+   ═══════════════════════════════════════════════════ */
+
+/* ── Pixel font for headers ─────────────────────── */
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+}
+
+/* ── SDV Color Variables ────────────────────────── */
 :root {
-  --bg-color: #3d2817;
-  --panel-bg: #f8ecc2;
-  --panel-border: #8b4513;
-  --text-color: #4e2a04;
-  --accent-green: #56a037;
-  --accent-blue: #4a90d9;
-  --accent-orange: #e07020;
-  --accent-red: #e63e3e;
-  --accent-purple: #9b59b6;
+  --sdv-wood-dark: #5c3d2e;
+  --sdv-wood-medium: #8b5a2b;
+  --sdv-wood-light: #c4956a;
+  --sdv-parchment: #f8ecc2;
+  --sdv-parchment-dark: #e8d9a0;
+  --sdv-gold: #e0a030;
+  --sdv-gold-dark: #8b6914;
+  --sdv-green: #56a037;
+  --sdv-green-dark: #2d5a20;
+  --sdv-blue: #4a90d9;
+  --sdv-orange: #e07020;
+  --sdv-red: #e63e3e;
+  --sdv-purple: #9b59b6;
+  --sdv-sky-day: #87ceeb;
+  --sdv-sky-night: #1a1a3e;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
+/* ── Pixel border style ─────────────────────────── */
+.pixel-border {
+  border-style: solid;
+  border-width: 4px;
+  border-image: none;
+  image-rendering: pixelated;
+  box-shadow:
+    inset -2px -2px 0px 0px rgba(0,0,0,0.2),
+    inset 2px 2px 0px 0px rgba(255,255,255,0.15),
+    4px 4px 0px 0px rgba(0,0,0,0.15);
 }
 
-html {
-  margin: 0;
-  padding: 0;
+.pixel-border-sm {
+  border-style: solid;
+  border-width: 3px;
+  box-shadow:
+    inset -1px -1px 0px 0px rgba(0,0,0,0.2),
+    inset 1px 1px 0px 0px rgba(255,255,255,0.15),
+    2px 2px 0px 0px rgba(0,0,0,0.1);
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'VT323', monospace;
-  background-color: #f0e6d2;
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23f0e6d2" width="40" height="40"/><circle fill="%23e0d6c2" cx="20" cy="20" r="1"/></svg>');
-  color: var(--text-color);
-  min-height: 100vh;
+/* ── Pixel button press effect ──────────────────── */
+.pixel-btn {
+  position: relative;
+  border: 3px solid;
+  border-bottom-width: 5px;
+  transition: all 0.05s;
+  image-rendering: pixelated;
 }
 
-/* Dark mode background */
-html.dark body {
-  background-color: #111827 !important;
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23111827" width="40" height="40"/><circle fill="%231f2937" cx="20" cy="20" r="1"/></svg>') !important;
+.pixel-btn:active {
+  border-bottom-width: 3px;
+  transform: translateY(2px) !important;
 }
 
-/* Custom scrollbar */
+/* ── Scrollbar styling (SDV themed) ─────────────── */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #d6c08d;
-  border-radius: 5px;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #374151;
+  background: rgba(92, 61, 46, 0.1);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #8b5a2b;
-  border-radius: 5px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #6b7280;
+  background: linear-gradient(to bottom, #c4956a, #8b5a2b);
+  border-radius: 4px;
+  border: 2px solid rgba(92, 61, 46, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b4020;
+  background: linear-gradient(to bottom, #e0a030, #c4956a);
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-/* Animation keyframes */
-@keyframes fadeIn {
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #555, #333);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Seasonal particle animation keyframes ──────── */
+@keyframes float-up {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-20px) rotate(720deg); opacity: 0; }
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(30px); }
+  75% { transform: translateX(-30px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes firefly {
+  0% { transform: translate(0, 0); opacity: 0; }
+  20% { opacity: 1; }
+  40% { transform: translate(40px, -30px); }
+  60% { transform: translate(-20px, -60px); opacity: 0.7; }
+  80% { transform: translate(30px, -20px); opacity: 0.3; }
+  100% { transform: translate(0, 0); opacity: 0; }
+}
+
+@keyframes leaf-fall {
+  0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  100% { transform: translateY(100vh) translateX(100px) rotate(720deg); opacity: 0; }
+}
+
+@keyframes snow-fall {
+  0% { transform: translateY(-20px) translateX(0); opacity: 0; }
+  10% { opacity: 0.8; }
+  100% { transform: translateY(100vh) translateX(50px); opacity: 0; }
+}
+
+@keyframes junimo-bounce {
+  0%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
+  30% { transform: translateY(-15px) scaleX(0.9) scaleY(1.1); }
+  50% { transform: translateY(-20px) scaleX(0.95) scaleY(1.05); }
+  70% { transform: translateY(-10px) scaleX(1.05) scaleY(0.95); }
+}
+
+@keyframes pixel-sparkle {
+  0% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0) rotate(360deg); }
+}
+
+@keyframes chicken-walk {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  25% { transform: translateX(10px) scaleX(1); }
+  50% { transform: translateX(20px) scaleX(-1); }
+  75% { transform: translateX(10px) scaleX(-1); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* ── Animation utility classes ──────────────────── */
+.animate-float-up {
+  animation: float-up linear infinite;
+}
+
+.animate-sway {
+  animation: sway 4s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle ease-in-out infinite;
+}
+
+.animate-firefly {
+  animation: firefly ease-in-out infinite;
+}
+
+.animate-leaf-fall {
+  animation: leaf-fall linear infinite;
+}
+
+.animate-snow-fall {
+  animation: snow-fall linear infinite;
+}
+
+.animate-junimo-bounce {
+  animation: junimo-bounce 1.5s ease-in-out infinite;
+}
+
+.animate-pixel-sparkle {
+  animation: pixel-sparkle 2s ease-in-out infinite;
+}
+
+.animate-chicken-walk {
+  animation: chicken-walk 3s ease-in-out infinite;
+}
+
+/* ── SDV-style text shadow ──────────────────────── */
+.text-shadow-pixel {
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+}
+
+.text-shadow-glow {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+/* ── Wooden frame background ────────────────────── */
+.wooden-frame {
+  background: 
+    linear-gradient(135deg, rgba(139,90,43,0.1) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(92,61,46,0.1) 0%, transparent 50%);
+}
+
+/* ── Parchment texture ──────────────────────────── */
+.parchment-bg {
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(232,217,160,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(196,149,106,0.15) 0%, transparent 50%),
+    linear-gradient(to bottom, #f8ecc2, #f0e6d2);
+}
+
+/* ── Night sky effect (dark mode) ───────────────── */
+.night-sky {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(64,64,128,0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(32,32,80,0.2) 0%, transparent 50%),
+    linear-gradient(to bottom, #0f0f2e, #1a1a3e);
+}
+
+/* ── Fade-in animation class ────────────────────── */
+.animate-fade-in {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -82,168 +244,18 @@ html.dark body {
   }
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateX(-50%) translateY(100px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(-5%);
-    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-  }
-  50% {
-    transform: translateY(0);
-    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-  }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.3s ease-out forwards;
-}
-
-.animate-bounce {
-  animation: bounce 1s infinite;
-}
-
-/* Form elements */
-input[type="text"],
-select,
-textarea {
-  font-family: 'VT323', monospace;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-}
-
-/* Fix select/option in dark mode */
-.dark select {
-  background-color: #374151 !important;
-  color: white !important;
-}
-
-.dark select option {
-  background-color: #374151;
-  color: white;
-  padding: 8px;
-}
-
-.dark select option:hover,
-.dark select option:focus,
-.dark select option:checked {
-  background-color: #4b5563;
-  color: white;
-}
-
-/* Fix input autofill in dark mode */
-.dark input:-webkit-autofill,
-.dark input:-webkit-autofill:hover,
-.dark input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #374151 inset !important;
-  -webkit-text-fill-color: white !important;
-  caret-color: white !important;
-}
-
-/* Fix disabled elements in dark mode */
-.dark select:disabled,
-.dark input:disabled {
-  background-color: #1f2937 !important;
-  color: #6b7280 !important;
-  cursor: not-allowed;
-}
-
-/* Fix placeholder in dark mode */
-.dark input::placeholder {
-  color: #9ca3af;
-}
-
-/* Better select arrow in dark mode */
-.dark select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.5rem center;
-  background-repeat: no-repeat;
-  background-size: 1.5em 1.5em;
-  padding-right: 2.5rem;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-}
-
-/* Pre/Code styling */
-pre {
-  font-family: 'Consolas', 'Monaco', monospace;
-}
-
-/* Selection color */
+/* ── Selection colors ───────────────────────────── */
 ::selection {
-  background: var(--accent-orange);
-  color: white;
+  background: rgba(224, 112, 32, 0.3);
+  color: inherit;
 }
 
-.dark ::selection {
-  background: #f97316;
-  color: white;
+/* ── Input focus glow ───────────────────────────── */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(224, 160, 48, 0.3);
 }
 
-/* Checkbox accent */
-input[type="checkbox"] {
-  accent-color: var(--accent-green);
-}
-
-/* Border widths */
-.border-3 {
-  border-width: 3px;
-}
-
-.border-5 {
-  border-width: 5px;
-}
-
-.border-l-5 {
-  border-left-width: 5px;
-}
-
-/* Smooth transitions for theme changes */
-* {
-  transition-property: background-color, border-color;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in-out;
-}
-
-/* But don't transition these */
-button,
-a,
-input,
-select,
-.animate-fade-in,
-.animate-spin,
-.animate-bounce {
-  transition-property: all;
-  transition-duration: 200ms;
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  box-shadow: 0 0 0 3px rgba(224, 160, 48, 0.2);
 }

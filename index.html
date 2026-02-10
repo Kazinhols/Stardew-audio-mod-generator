@@ -1,49 +1,21 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Stardew Valley Audio Mod Generator — Create custom audio mods with a pixel-perfect interface" />
+    <meta name="theme-color" content="#5c3d2e" />
+    
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    
     <title>🎵 Stardew Audio Mod Generator</title>
-  
-    <meta name="description" content="Crie mods de áudio para Stardew Valley 1.6+ facilmente. Gere manifest.json, content.json e arquivos i18n para Content Patcher.">
-    <meta name="keywords" content="stardew valley, mod, audio, music, content patcher, smapi, generator">
-    <meta name="author" content="Kazinhols">
-    <meta name="theme-color" content="#3d2817">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="brown-translucent">
-    <meta name="apple-mobile-web-app-title" content="SDV Audio Mod">
-    
-    <meta property="og:title" content="Stardew Audio Mod Generator">
-    <meta property="og:description" content="Crie mods de áudio para Stardew Valley 1.6+ facilmente">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="/og-image.png">
-    
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Stardew Audio Mod Generator">
-    <meta name="twitter:description" content="Crie mods de áudio para Stardew Valley 1.6+">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    <style>
+      /* Prevent FOUC */
+      html { background: #f0e6d2; }
+      html.dark { background: #0f0f2e; }
+    </style>
   </head>
-  <body style="background-color: #f0e6d2; margin: 0; padding: 0;">
-    <script>
-      // Apply theme immediately to prevent white flash
-      (function() {
-        try {
-          const theme = localStorage.getItem('sdv-audio-mod-theme');
-          if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.body.style.backgroundColor = '#111827';
-          }
-        } catch (e) {
-          console.warn('Theme init error:', e);
-        }
-      })();
-    </script>
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -108,12 +108,12 @@ export function AudioForm({ onAdd, existingIds, showToast }: AudioFormProps) {
         🎵 {t('audio.addTitle')}
       </h3>
 
-      {}
+      {/* Audio ID with suggestions */}
       <div className="mb-4">
         <label className={labelClass}>🎯 {t('audio.id')}</label>
         <div ref={wrapperRef} className="relative">
           <input type="text" value={audioId} onChange={e => setAudioId(e.target.value)} onFocus={() => setShowSuggestions(true)} placeholder="Ex: MainTheme, spring1..." className={inputClass} />
-          {showSuggestions && (
+          {showSuggestions && audioId.trim() && (
             <div className={cn('absolute top-full left-0 right-0 border-3 border-t-0 rounded-b-md max-h-64 overflow-y-auto z-50', theme === 'dark' ? 'bg-gray-800 border-gray-600' : 'bg-white border-[#8b5a2b]')}>
               {Object.entries(groupedSuggestions).map(([cat, items]) => (
                 <div key={cat}>
@@ -126,6 +126,11 @@ export function AudioForm({ onAdd, existingIds, showToast }: AudioFormProps) {
                   ))}
                 </div>
               ))}
+              {filteredSuggestions.length === 0 && (
+                <div className={cn('px-3 py-4 text-center text-sm', theme === 'dark' ? 'text-gray-500' : 'text-gray-400')}>
+                  No matches found — will be created as custom audio
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -138,7 +143,7 @@ export function AudioForm({ onAdd, existingIds, showToast }: AudioFormProps) {
 
       <hr className={cn('border-0 h-0.5 my-4', theme === 'dark' ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent' : 'bg-gradient-to-r from-transparent via-[#8b4513] to-transparent')} />
 
-      {}
+      {/* Category and Loop */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className={labelClass}>📂 {t('audio.category')}</label>
@@ -160,10 +165,10 @@ export function AudioForm({ onAdd, existingIds, showToast }: AudioFormProps) {
 
       <hr className={cn('border-0 h-0.5 my-4', theme === 'dark' ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent' : 'bg-gradient-to-r from-transparent via-[#8b4513] to-transparent')} />
 
-      {}
+      {/* Files */}
       <label className={labelClass}>📁 {t('audio.files')}</label>
       <div className="flex gap-2.5 mt-2">
-        <input type="text" value={newFileName} onChange={e => setNewFileName(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAddFile()} placeholder="filename.ogg" className={cn(inputClass, 'flex-1')} />
+        <input type="text" value={newFileName} onChange={e => setNewFileName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddFile()} placeholder="filename.ogg" className={cn(inputClass, 'flex-1')} />
         <button onClick={handleAddFile} className={cn('px-5 py-3 text-lg text-white border-0 rounded-md cursor-pointer', theme === 'dark' ? 'bg-green-600' : 'bg-[#56a037]')}>+</button>
       </div>
       <div className="flex flex-wrap gap-2 mt-2.5">
@@ -179,9 +184,9 @@ export function AudioForm({ onAdd, existingIds, showToast }: AudioFormProps) {
 
       <hr className={cn('border-0 h-0.5 my-4', theme === 'dark' ? 'bg-gradient-to-r from-transparent via-gray-600 to-transparent' : 'bg-gradient-to-r from-transparent via-[#8b4513] to-transparent')} />
 
-      {}
+      {/* Jukebox */}
       <label className={cn(
-        'flex items-center gap-2 text-lg cursor-pointer px-3.5 py-2.5 rounded-md border-2 transition-all inline-flex',
+        'flex items-center gap-2 text-lg cursor-pointer px-3.5 py-2.5 rounded-md border-2 transition-all',
         category !== 'Music' && 'opacity-50 cursor-not-allowed',
         theme === 'dark'
           ? 'bg-gray-700/60 border-gray-600 text-white hover:bg-gray-600/60'

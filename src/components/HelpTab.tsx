@@ -45,7 +45,7 @@ export const HelpTab = memo(function HelpTab() {
   return (
     <div className="animate-fade-in space-y-4">
 
-      {}
+      {/* Tauri Architecture */}
       {isTauri && (
         <div className={cn(
           'border-2 rounded-xl p-4',
@@ -86,7 +86,7 @@ export const HelpTab = memo(function HelpTab() {
         </div>
       )}
 
-      {}
+      {/* Web version info */}
       {!isTauri && (
         <div className={cn(
           'border-2 rounded-xl p-4',
@@ -108,25 +108,36 @@ export const HelpTab = memo(function HelpTab() {
                 ? 'Configure seu mod de áudio diretamente no navegador'
                 : 'Configure your audio mod directly in the browser'}</li>
               <li>• {language === 'pt'
-                ? 'Adicione arquivos OGG Vorbis arrastando ou selecionando'
-                : 'Add OGG Vorbis files by dragging or selecting'}</li>
+                ? 'Cadastre os nomes dos seus arquivos OGG Vorbis (.ogg) que serão usados no mod'
+                : 'Register the names of your OGG Vorbis (.ogg) files that will be used in the mod'}</li>
+              <li>• {language === 'pt'
+                ? 'Escolha entre substituir áudios originais do jogo ou adicionar novos'
+                : 'Choose between replacing original game audios or adding new ones'}</li>
+              <li>• {language === 'pt'
+                ? 'Gere os arquivos manifest.json e content.json automaticamente'
+                : 'Automatically generate manifest.json and content.json files'}</li>
               <li>• {language === 'pt'
                 ? 'Baixe o mod pronto como ZIP ao finalizar'
                 : 'Download the finished mod as a ZIP when done'}</li>
               <li>• {language === 'pt'
-                ? 'Nenhuma instalação necessária!'
-                : 'No installation needed!'}</li>
+                ? 'Nenhuma instalação necessária — tudo roda no navegador!'
+                : 'No installation needed — everything runs in the browser!'}</li>
             </ul>
             <p className={cn('mt-3 text-sm italic', theme === 'dark' ? 'text-gray-400' : 'text-gray-600')}>
+              ⚠️ {language === 'pt'
+                ? 'Na versão Web, você informa os nomes dos arquivos .ogg manualmente. Os arquivos de áudio devem ser colocados na pasta assets/ do mod após o download.'
+                : 'In the Web version, you enter .ogg file names manually. The audio files must be placed in the mod\'s assets/ folder after download.'}
+            </p>
+            <p className={cn('mt-2 text-sm italic', theme === 'dark' ? 'text-gray-400' : 'text-gray-600')}>
               💡 {language === 'pt'
-                ? 'Para recursos avançados (file watcher, validação Rust, etc), baixe a versão Desktop.'
-                : 'For advanced features (file watcher, Rust validation, etc), download the Desktop version.'}
+                ? 'Para recursos avançados (scanner de OGG, file watcher, validação Rust, exportação direta), baixe a versão Desktop.'
+                : 'For advanced features (OGG scanner, file watcher, Rust validation, direct export), download the Desktop version.'}
             </p>
           </div>
         </div>
       )}
 
-      {}
+      {/* Mod Structure */}
       <div className={cn(
         'border-2 rounded-xl p-4',
         theme === 'dark'
@@ -151,7 +162,7 @@ export const HelpTab = memo(function HelpTab() {
         </div>
       </div>
 
-      {}
+      {/* JSON Format */}
       <div className={styles.box}>
         <h3 className={styles.head}>
           📋 {language === 'pt' ? 'Formato JSON (SDV 1.6+)' : 'JSON Format (SDV 1.6+)'}
@@ -173,7 +184,7 @@ export const HelpTab = memo(function HelpTab() {
 }`}</pre>
       </div>
 
-      {}
+      {/* Requirements */}
       <div className={styles.box}>
         <h3 className={styles.head}>
           ⚠️ {language === 'pt' ? 'Requisitos' : 'Requirements'}
@@ -188,9 +199,44 @@ export const HelpTab = memo(function HelpTab() {
         </ul>
       </div>
 
-      {}
-      {}
-      {}
+      {/* Cross-Save */}
+      <div className={cn(
+        'border-2 rounded-xl p-4',
+        theme === 'dark'
+          ? 'bg-gradient-to-r from-purple-900/30 to-purple-800/30 border-purple-600'
+          : 'bg-gradient-to-r from-[#f3e5f5] to-[#e1bee7] border-[#9b59b6]'
+      )}>
+        <h3 className={cn(
+          'text-xl font-bold mb-3',
+          theme === 'dark' ? 'text-purple-400' : 'text-[#9b59b6]'
+        )}>
+          🔄 {language === 'pt' ? 'Cross-Save (Web ↔ Desktop)' : 'Cross-Save (Web ↔ Desktop)'}
+        </h3>
+        <div className={cn('text-base space-y-2', theme === 'dark' ? 'text-gray-300' : '')}>
+          <ul className="ml-4 space-y-1">
+            <li>• {language === 'pt'
+              ? 'Projetos salvos na versão Web podem ser abertos no Desktop e vice-versa'
+              : 'Projects saved on Web can be opened on Desktop and vice versa'}</li>
+            <li>• {language === 'pt'
+              ? 'Formato unificado .sdvaudio.json — compatível entre plataformas'
+              : 'Unified .sdvaudio.json format — cross-platform compatible'}</li>
+            <li>• {language === 'pt'
+              ? 'Web: auto-save no localStorage a cada 15 segundos'
+              : 'Web: auto-save to localStorage every 15 seconds'}</li>
+            <li>• {language === 'pt'
+              ? 'Desktop: auto-save via Rust a cada 30 segundos'
+              : 'Desktop: auto-save via Rust every 30 seconds'}</li>
+            <li>• {language === 'pt'
+              ? 'Tipo de áudio (substituir/personalizado) e nome original são preservados'
+              : 'Audio type (replace/custom) and original name are preserved'}</li>
+            <li>• {language === 'pt'
+              ? 'Use Ctrl+S para salvar e Ctrl+O para abrir em ambas versões'
+              : 'Use Ctrl+S to save and Ctrl+O to open on both versions'}</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Keyboard Shortcuts */}
       <div className={styles.box}>
         <h3 className={styles.head}>
           ⌨️ {language === 'pt' ? 'Atalhos de Teclado' : 'Keyboard Shortcuts'}
@@ -202,7 +248,7 @@ export const HelpTab = memo(function HelpTab() {
         </div>
       </div>
 
-      {}
+      {/* About */}
       <div className={styles.box}>
         <h3 className={styles.head}>
           💾 {language === 'pt' ? 'Sobre' : 'About'}

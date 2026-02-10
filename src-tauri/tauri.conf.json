@@ -1,29 +1,22 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Stardew Audio Mod Generator",
-  "version": "3.0.0",
-  "identifier": "com.kazinhols.stardew-audio-mod-generator",
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "react-vite-tailwind",
+  "version": "0.1.0",
+  "identifier": "com.tauri.dev",
   "build": {
+    "frontendDist": "../build",
+    "devUrl": "http://localhost:3000",
     "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:5173",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
+    "beforeBuildCommand": "npm run build"
   },
   "app": {
-    "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Stardew Audio Mod Generator",
-        "width": 1200,
-        "height": 800,
-        "minWidth": 900,
-        "minHeight": 600,
-        "center": true,
+        "title": "react-vite-tailwind",
+        "width": 800,
+        "height": 600,
         "resizable": true,
-        "fullscreen": false,
-        "decorations": true,
-        "transparent": false,
-        "focus": true
+        "fullscreen": false
       }
     ],
     "security": {
@@ -39,37 +32,6 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ],
-    "resources": [],
-    "copyright": "© 2024 Kazinhols",
-    "category": "Utility",
-    "shortDescription": "Gerador de mods de audio para Stardew Valley",
-    "longDescription": "Crie mods de audio para Stardew Valley 1.6+ de forma facil e visual.",
-    "linux": {
-      "appimage": {
-        "bundleMediaFramework": false
-      },
-      "deb": {
-        "depends": []
-      },
-      "rpm": {
-        "depends": []
-      }
-    },
-    "windows": {
-      "certificateThumbprint": null,
-      "digestAlgorithm": "sha256",
-      "timestampUrl": "",
-      "nsis": {
-        "installMode": "currentUser",
-        "languages": ["PortugueseBR", "English"],
-        "displayLanguageSelector": true
-      }
-    }
-  },
-  "plugins": {
-    "shell": {
-      "open": true
-    }
+    ]
   }
 }

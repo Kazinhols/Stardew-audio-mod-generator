@@ -96,11 +96,11 @@ export function AudioList({ audios, onRemove, onClearAll, onNext }: AudioListPro
                     ? 'bg-gradient-to-r from-gray-800 to-gray-750 border-gray-600 hover:border-orange-500'
                     : 'bg-gradient-to-r from-white to-[#f8f0d8] border-[#8b5a2b] hover:border-[#e07020]',
                   audio.type === 'replace' 
-                    ? 'border-l-4 sm:border-l-5 border-l-[#e07020]' 
-                    : 'border-l-4 sm:border-l-5 border-l-[#56a037]'
+                    ? 'border-l-4 sm:border-l-[5px] border-l-[#e07020]' 
+                    : 'border-l-4 sm:border-l-[5px] border-l-[#56a037]'
                 )}
               >
-                {}
+                {/* Header */}
                 <div className="flex justify-between items-start mb-2.5">
                   <div className="flex-1 min-w-0">
                     <div className={cn(
@@ -128,7 +128,7 @@ export function AudioList({ audios, onRemove, onClearAll, onNext }: AudioListPro
                   </motion.button>
                 </div>
 
-                {}
+                {/* Files */}
                 <div className="flex flex-wrap gap-1.5 mb-2.5">
                   {audio.files.map((file, fileIndex) => (
                     <motion.span
@@ -146,7 +146,7 @@ export function AudioList({ audios, onRemove, onClearAll, onNext }: AudioListPro
                   ))}
                 </div>
 
-                {}
+                {/* Badges */}
                 <motion.div 
                   className="flex flex-wrap gap-1.5"
                   initial="hidden"
@@ -205,7 +205,7 @@ export function AudioList({ audios, onRemove, onClearAll, onNext }: AudioListPro
                   )}
                 </motion.div>
 
-                {}
+                {/* Jukebox name */}
                 {audio.jukebox && (
                   <motion.div 
                     initial={{ opacity: 0 }}
@@ -224,7 +224,7 @@ export function AudioList({ audios, onRemove, onClearAll, onNext }: AudioListPro
         </div>
       )}
 
-      {}
+      {/* Bottom Buttons */}
       <motion.div 
         className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5"
         initial={{ opacity: 0, y: 20 }}

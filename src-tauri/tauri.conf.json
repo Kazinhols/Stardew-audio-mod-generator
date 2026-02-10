@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "react-vite-tailwind",
+  "productName": "stardew-audio-mod-generator",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.stardew-audio.generator",
   "build": {
     "frontendDist": "../build",
     "devUrl": "http://localhost:3000",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "react-vite-tailwind",
+        "title": "Stardew audio mod generator",
         "width": 800,
         "height": 600,
         "resizable": true,

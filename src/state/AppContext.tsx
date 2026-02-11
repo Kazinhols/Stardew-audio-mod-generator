@@ -25,7 +25,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const STORAGE_KEY = "sdv-audio-mod-autosave";
 const SAVE_FORMAT_VERSION = "3.0.0";
-const AUTO_SAVE_INTERVAL = 15000; // 15 segundos
+const AUTO_SAVE_INTERVAL = 15000;
 
 let IS_TAURI_CACHED: boolean | null = null;
 
@@ -208,7 +208,6 @@ function downloadStringAsFile(filename: string, content: string) {
   URL.revokeObjectURL(url);
 }
 
-// ─── Builders ──────────────────────────────────────────────────
 
 function buildManifest(config: ModConfig) {
   return {
@@ -258,7 +257,6 @@ function buildI18n(audios: AudioEntry[]) {
   return obj;
 }
 
-// ─── Converters ────────────────────────────────────────────────
 
 function configToRust(c: ModConfig) {
   return {
@@ -302,7 +300,6 @@ function audiosFromSave(audios: any[]): AudioEntry[] {
   }));
 }
 
-// ─── Web LocalStorage Logic ────────────────────────────────────
 
 function saveToLocalStorage(state: AppState) {
   try {
@@ -338,7 +335,6 @@ function loadFromLocalStorage(): {
   }
 }
 
-// ─── Context ───────────────────────────────────────────────────
 
 type ToastState = { visible: boolean; message: string; type: ToastType };
 
@@ -389,27 +385,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
 
-  // Mantém o stateRef atualizado para uso dentro de timers
   useEffect(() => {
     stateRef.current = state;
   }, [state]);
 
   const isDesktop = useMemo(() => detectTauri(), []);
 
-  // ── Auto-save System (Web & Desktop) ──────────────────────────
 
   useEffect(() => {
     const interval = setInterval(() => {
       const currentState = stateRef.current;
       
-      // Só salva se houver alguma alteração relevante (audios adicionados)
-      // ou se o usuário configurou o modId, para não salvar state vazio
       if (currentState.audios.length === 0 && currentState.modConfig.modId === "") {
         return;
       }
 
       if (isDesktop) {
-        // Desktop: Chama comando Rust 'auto_save_project'
         const projectData = {
           config: configToRust(currentState.modConfig),
           audios: audiosToRust(currentState.audios),
@@ -423,7 +414,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           .catch((err) => console.error("❌ [AutoSave] Desktop Failed:", err));
           
       } else {
-        // Web: Salva no LocalStorage
         saveToLocalStorage(currentState);
         console.log("✅ [AutoSave] Web Saved");
       }
@@ -432,12 +422,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [isDesktop]);
 
-  // ── Auto-restore System (Web & Desktop) ───────────────────────
 
   useEffect(() => {
     const initLoad = async () => {
       if (isDesktop) {
-        // Desktop: Tenta carregar do arquivo de autosave do Rust
         try {
           const savedData = await invoke<any>("load_auto_save");
           if (savedData) {
@@ -453,7 +441,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           console.warn("⚠️ Sem auto-save desktop ou erro ao ler:", err);
         }
       } else {
-        // Web: Carrega do LocalStorage
         const saved = loadFromLocalStorage();
         if (saved) {
           dispatch({ type: "LOAD_PROJECT", payload: saved });
@@ -464,17 +451,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
 
     initLoad();
-    // Executa apenas uma vez na montagem
   }, [isDesktop]);
 
-  // ── Toast Helper ──────────────────────────────────────────────
 
   const showToast = useCallback((message: string, type: ToastType = "info") => {
     setToast({ visible: true, message, type });
     setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), 3000);
   }, []);
 
-  // ── File Input (Web) ──────────────────────────────────────────
 
   const handleFileSelect = useCallback(
     (e: Event) => {
@@ -517,7 +501,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [isDesktop, handleFileSelect]);
 
-  // ── Tauri Actions ─────────────────────────────────────────────
 
   const scanFolder = useCallback(async () => {
     if (!isDesktop) return;

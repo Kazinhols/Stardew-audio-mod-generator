@@ -121,7 +121,6 @@ export function AudioForm({ onAdd, existingIds, showToast, scannedFiles = [] }: 
         🎵 {t('audio.addTitle')}
       </h3>
 
-      {/* Audio ID */}
       <div className="mb-4">
         <label className={labelClass}>🎯 {t('audio.id')}</label>
         <div ref={wrapperRef} className="relative">
@@ -151,7 +150,6 @@ export function AudioForm({ onAdd, existingIds, showToast, scannedFiles = [] }: 
 
       <hr className={dividerClass} />
 
-      {/* Category + Loop */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
           <label className={labelClass}>📂 {t('audio.category')}</label>
@@ -173,14 +171,12 @@ export function AudioForm({ onAdd, existingIds, showToast, scannedFiles = [] }: 
 
       <hr className={dividerClass} />
 
-      {/* Manual file entry */}
       <label className={labelClass}>📁 {t('audio.files')}</label>
       <div className="flex gap-2.5 mt-2">
         <input type="text" value={newFileName} onChange={e => setNewFileName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddFile()} placeholder="filename.ogg" className={cn(inputClass, 'flex-1')} />
         <button onClick={handleAddFile} className={cn('px-5 py-3 text-lg text-white border-0 rounded-md cursor-pointer', theme === 'dark' ? 'bg-green-600' : 'bg-[#56a037]')}>+</button>
       </div>
 
-      {/* Current files */}
       <div className="flex flex-wrap gap-2 mt-2.5">
         {files.length === 0 ? (
           <span className={cn('text-sm', theme === 'dark' ? 'text-gray-500' : 'text-gray-400')}>{t('audio.noFiles')}</span>
@@ -192,7 +188,6 @@ export function AudioForm({ onAdd, existingIds, showToast, scannedFiles = [] }: 
         ))}
       </div>
 
-      {/* Scanned files */}
       {scannedFiles.length > 0 && (
         <>
           <hr className={dividerClass} />
@@ -233,7 +228,7 @@ export function AudioForm({ onAdd, existingIds, showToast, scannedFiles = [] }: 
 
       <hr className={dividerClass} />
 
-      {/* Jukebox */}
+
       <label className={cn(
         'flex items-center gap-2 text-lg cursor-pointer px-3.5 py-2.5 rounded-md border-2 transition-all inline-flex',
         category !== 'Music' && 'opacity-50 cursor-not-allowed',
@@ -261,7 +256,6 @@ export function AudioForm({ onAdd, existingIds, showToast, scannedFiles = [] }: 
         </div>
       )}
 
-      {/* Submit */}
       <button onClick={handleSubmit} className={cn('w-full mt-5 p-3.5 text-2xl text-white rounded-lg cursor-pointer flex items-center justify-center gap-2.5 shadow-md transition-all hover:-translate-y-0.5', theme === 'dark' ? 'bg-gradient-to-b from-green-500 to-green-600 border-b-4 border-green-700' : 'bg-gradient-to-b from-[#6bc048] to-[#4a9030] border-b-4 border-[#2d5a20]')}>
         ➕ {t('audio.addToList')}
       </button>

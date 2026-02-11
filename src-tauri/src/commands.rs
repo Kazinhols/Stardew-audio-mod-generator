@@ -1,17 +1,10 @@
-// src-tauri/src/commands.rs
-// Stardew Audio Mod Generator - Rust Commands
-// VERSÃO CORRIGIDA - 100% FUNCIONAL
-
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use tauri::{AppHandle, Emitter, Manager}; // IMPORTANTE: Emitter importado!
+use tauri::{AppHandle, Emitter, Manager};
 
-// ============================================================================
-// TYPES
-// ============================================================================
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AudioFileInfo {
@@ -84,9 +77,6 @@ pub struct ConvertResult {
     pub message: String,
 }
 
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
 
 fn format_size(bytes: u64) -> String {
     const KB: u64 = 1024;
@@ -121,8 +111,6 @@ fn is_audio_file(path: &Path) -> bool {
         .unwrap_or(false)
 }
 
-/// Analisa um arquivo de áudio
-/// CORREÇÃO: ogg::PacketReader::new() retorna PacketReader diretamente, NÃO Result!
 fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
     let name = path
         .file_name()
@@ -132,7 +120,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
     let path_str = path.to_string_lossy().to_string();
     let format = get_audio_format(path);
 
-    // Ler metadata do arquivo
     let metadata = match fs::metadata(path) {
         Ok(m) => m,
         Err(e) => {
@@ -155,10 +142,8 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
     let size_bytes = metadata.len();
     let size_display = format_size(size_bytes);
 
-    // Para arquivos não-OGG, retorna info básica
-    // ✅ CORREÇÃO: WAV é válido! Apenas precisa conversão
     if format != "OGG" {
-        let is_valid = format == "WAV"; // WAV é válido
+        let is_valid = format == "WAV";
         return AudioFileInfo {
             name,
             path: path_str,
@@ -174,7 +159,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
         };
     }
 
-    // Abrir arquivo OGG
     let file = match fs::File::open(path) {
         Ok(f) => f,
         Err(e) => {
@@ -194,25 +178,15 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
         }
     };
 
-    // =========================================================================
-    // CORREÇÃO CRÍTICA:
-    // ogg::PacketReader::new(file) retorna PacketReader<File> DIRETAMENTE
-    // NÃO retorna Result<PacketReader, Error>!
-    // 
-    // Somente reader.read_packet() retorna Result, então o match vai nele.
-    // =========================================================================
     let mut reader = ogg::PacketReader::new(file);
 
-    // read_packet() retorna Result<Option<Packet>, OggReadError>
     match reader.read_packet() {
         Ok(Some(packet)) => {
-            // Verificar assinatura Vorbis (primeiros 7 bytes: 0x01 + "vorbis")
             let is_vorbis = packet.data.len() >= 7
                 && packet.data[0] == 0x01
                 && &packet.data[1..7] == b"vorbis";
 
             if is_vorbis && packet.data.len() >= 30 {
-                // Parse Vorbis identification header
                 let channels = packet.data[11];
                 let sample_rate = u32::from_le_bytes([
                     packet.data[12],
@@ -221,7 +195,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
                     packet.data[15],
                 ]);
 
-                // Estimar duração a partir do tamanho e bitrate
                 let bitrate_nominal = i32::from_le_bytes([
                     packet.data[20],
                     packet.data[21],
@@ -248,7 +221,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
                     format,
                 }
             } else {
-                // OGG mas não é Vorbis (provavelmente Opus)
                 AudioFileInfo {
                     name,
                     path: path_str,
@@ -265,7 +237,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
             }
         }
         Ok(None) => {
-            // Arquivo OGG vazio
             AudioFileInfo {
                 name,
                 path: path_str,
@@ -281,7 +252,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
             }
         }
         Err(e) => {
-            // Erro ao ler pacote
             AudioFileInfo {
                 name,
                 path: path_str,
@@ -299,11 +269,6 @@ fn analyze_ogg_file(path: &Path) -> AudioFileInfo {
     }
 }
 
-// ============================================================================
-// COMMANDS
-// ============================================================================
-
-/// Escanear pasta por arquivos de áudio
 #[tauri::command]
 pub async fn scan_audio_folder(folder_path: String) -> Result<ScanResult, String> {
     log::info!("🔍 Scanning folder: {}", folder_path);
@@ -316,7 +281,6 @@ pub async fn scan_audio_folder(folder_path: String) -> Result<ScanResult, String
     let mut files = Vec::new();
     let mut total_size: u64 = 0;
 
-    // Usar walkdir para escanear recursivamente
     for entry in walkdir::WalkDir::new(path)
         .follow_links(true)
         .into_iter()
@@ -330,7 +294,6 @@ pub async fn scan_audio_folder(folder_path: String) -> Result<ScanResult, String
         }
     }
 
-    // Ordenar por nome
     files.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
 
     let total_valid = files.iter().filter(|f| f.is_vorbis).count();
@@ -352,7 +315,6 @@ pub async fn scan_audio_folder(folder_path: String) -> Result<ScanResult, String
     })
 }
 
-/// Observar pasta por mudanças
 #[tauri::command]
 pub async fn watch_assets_folder(app_handle: AppHandle, folder_path: String) -> Result<(), String> {
     use notify::{Config, RecommendedWatcher, RecursiveMode, Watcher};
@@ -386,7 +348,6 @@ pub async fn watch_assets_folder(app_handle: AppHandle, folder_path: String) -> 
 
                     if !files.is_empty() {
                         log::info!("📁 Files changed: {:?}", files);
-                        // CORREÇÃO: Emitter trait importado no topo do arquivo
                         let _ = app_handle.emit(
                             "assets-changed",
                             serde_json::json!({
@@ -409,7 +370,6 @@ pub async fn watch_assets_folder(app_handle: AppHandle, folder_path: String) -> 
     Ok(())
 }
 
-/// Salvar projeto em arquivo
 #[tauri::command]
 pub async fn save_project(path: String, data: ProjectData) -> Result<(), String> {
     log::info!("💾 Saving project to: {}", path);
@@ -421,7 +381,6 @@ pub async fn save_project(path: String, data: ProjectData) -> Result<(), String>
     Ok(())
 }
 
-/// Carregar projeto de arquivo
 #[tauri::command]
 pub async fn load_project(path: String) -> Result<ProjectData, String> {
     log::info!("📂 Loading project from: {}", path);
@@ -434,7 +393,6 @@ pub async fn load_project(path: String) -> Result<ProjectData, String> {
     Ok(data)
 }
 
-/// Auto-salvar projeto no diretório de dados do app
 #[tauri::command]
 pub async fn auto_save_project(app_handle: AppHandle, data: ProjectData) -> Result<(), String> {
     let app_dir = app_handle
@@ -452,7 +410,6 @@ pub async fn auto_save_project(app_handle: AppHandle, data: ProjectData) -> Resu
     Ok(())
 }
 
-/// Carregar projeto auto-salvo
 #[tauri::command]
 pub async fn load_auto_save(app_handle: AppHandle) -> Result<Option<ProjectData>, String> {
     let app_dir = app_handle
@@ -473,7 +430,6 @@ pub async fn load_auto_save(app_handle: AppHandle) -> Result<Option<ProjectData>
     Ok(Some(data))
 }
 
-/// Gerar conteúdo do manifest.json
 #[tauri::command]
 pub fn generate_manifest_json(config: ModConfig) -> Result<String, String> {
     let manifest = serde_json::json!({
@@ -491,7 +447,6 @@ pub fn generate_manifest_json(config: ModConfig) -> Result<String, String> {
     serde_json::to_string_pretty(&manifest).map_err(|e| e.to_string())
 }
 
-/// Gerar conteúdo do content.json
 #[tauri::command]
 pub fn generate_content_json(audios: Vec<AudioEntry>) -> Result<String, String> {
     let mut changes = Vec::new();
@@ -527,7 +482,6 @@ pub fn generate_content_json(audios: Vec<AudioEntry>) -> Result<String, String> 
         }));
     }
 
-    // Adicionar entradas de jukebox se houver
     let jukebox_audios: Vec<_> = audios.iter().filter(|a| a.jukebox.is_some()).collect();
     if !jukebox_audios.is_empty() {
         let mut entries = serde_json::Map::new();
@@ -560,7 +514,6 @@ pub fn generate_content_json(audios: Vec<AudioEntry>) -> Result<String, String> 
     serde_json::to_string_pretty(&content).map_err(|e| e.to_string())
 }
 
-/// Gerar conteúdo do i18n/default.json
 #[tauri::command]
 pub fn generate_i18n_json(audios: Vec<AudioEntry>) -> Result<String, String> {
     let mut i18n = serde_json::Map::new();
@@ -574,7 +527,6 @@ pub fn generate_i18n_json(audios: Vec<AudioEntry>) -> Result<String, String> {
     serde_json::to_string_pretty(&serde_json::Value::Object(i18n)).map_err(|e| e.to_string())
 }
 
-/// Exportar mod para pasta
 #[tauri::command]
 pub async fn export_to_folder(
     folder_path: String,
@@ -592,32 +544,27 @@ pub async fn export_to_folder(
         .collect::<String>();
     let mod_folder = Path::new(&folder_path).join(format!("[CP] {}", clean_name.trim()));
 
-    // Criar diretórios
     fs::create_dir_all(&mod_folder).map_err(|e| e.to_string())?;
     fs::create_dir_all(mod_folder.join("assets")).map_err(|e| e.to_string())?;
     fs::create_dir_all(mod_folder.join("i18n")).map_err(|e| e.to_string())?;
 
     let mut files_created = Vec::new();
 
-    // Escrever manifest.json
     let manifest = generate_manifest_json(config)?;
     let manifest_path = mod_folder.join("manifest.json");
     fs::write(&manifest_path, &manifest).map_err(|e| e.to_string())?;
     files_created.push("manifest.json".to_string());
 
-    // Escrever content.json
     let content = generate_content_json(audios.clone())?;
     let content_path = mod_folder.join("content.json");
     fs::write(&content_path, &content).map_err(|e| e.to_string())?;
     files_created.push("content.json".to_string());
 
-    // Escrever i18n/default.json
     let i18n = generate_i18n_json(audios.clone())?;
     let i18n_path = mod_folder.join("i18n/default.json");
     fs::write(&i18n_path, &i18n).map_err(|e| e.to_string())?;
     files_created.push("i18n/default.json".to_string());
 
-    // Copiar arquivos de áudio se solicitado
     if copy_audio_files {
         if let Some(source) = audio_source_folder {
             let source_path = Path::new(&source);
@@ -649,7 +596,6 @@ pub async fn export_to_folder(
     })
 }
 
-/// Exportar mod como arquivo ZIP
 #[tauri::command]
 pub async fn export_to_zip(
     file_path: String,
@@ -677,7 +623,6 @@ pub async fn export_to_zip(
 
     let mut files_created = Vec::new();
 
-    // Adicionar manifest.json
     let manifest = generate_manifest_json(config)?;
     zip.start_file(format!("{}/manifest.json", prefix), options)
         .map_err(|e: zip::result::ZipError| e.to_string())?;
@@ -685,7 +630,6 @@ pub async fn export_to_zip(
         .map_err(|e: std::io::Error| e.to_string())?;
     files_created.push("manifest.json".to_string());
 
-    // Adicionar content.json
     let content = generate_content_json(audios.clone())?;
     zip.start_file(format!("{}/content.json", prefix), options)
         .map_err(|e: zip::result::ZipError| e.to_string())?;
@@ -693,7 +637,6 @@ pub async fn export_to_zip(
         .map_err(|e: std::io::Error| e.to_string())?;
     files_created.push("content.json".to_string());
 
-    // Adicionar i18n/default.json
     let i18n = generate_i18n_json(audios.clone())?;
     if !i18n.trim().is_empty() && i18n != "{}" {
         zip.start_file(format!("{}/i18n/default.json", prefix), options)
@@ -703,7 +646,6 @@ pub async fn export_to_zip(
         files_created.push("i18n/default.json".to_string());
     }
 
-    // Adicionar arquivos de áudio se solicitado
     if include_audio_files {
         if let Some(source) = audio_source_folder {
             let source_path = Path::new(&source);
@@ -737,7 +679,6 @@ pub async fn export_to_zip(
     })
 }
 
-/// Converter arquivo de áudio usando FFmpeg
 #[tauri::command]
 pub async fn convert_audio(
     source_path: String,
@@ -755,7 +696,6 @@ pub async fn convert_audio(
         return Err("Arquivo fonte não encontrado".to_string());
     }
 
-    // Determinar caminho de saída
     let stem = source.file_stem().and_then(|s| s.to_str()).unwrap_or("audio");
     let extension = match target_format.to_lowercase().as_str() {
         "ogg" | "vorbis" => "ogg",
@@ -769,31 +709,29 @@ pub async fn convert_audio(
         source.with_extension(extension)
     };
 
-    // Construir comando FFmpeg
     let mut cmd = Command::new("ffmpeg");
-    cmd.arg("-y") // Sobrescrever saída
+    cmd.arg("-y")
         .arg("-i")
         .arg(&source_path);
 
     match extension {
         "ogg" => {
-            // ✅ IMPORTANTE: OGG Vorbis com todos os parâmetros explícitos
             cmd.arg("-c:a")
-                .arg("libvorbis")          // ✅ Codec Vorbis (NÃO Opus!)
+                .arg("libvorbis")          
                 .arg("-q:a")
-                .arg("6")                  // ✅ Qualidade 6 (boa, ~192kbps)
+                .arg("6")                  
                 .arg("-ar")
-                .arg("44100")              // ✅ Sample rate 44.1kHz
+                .arg("44100")              
                 .arg("-ac")
-                .arg("2");                 // ✅ Stereo (2 canais) - ADICIONADO!
+                .arg("2");                 
         }
         "wav" => {
             cmd.arg("-c:a")
-                .arg("pcm_s16le")          // PCM 16-bit
+                .arg("pcm_s16le")          
                 .arg("-ar")
-                .arg("44100")              // Sample rate 44.1kHz
+                .arg("44100")              
                 .arg("-ac")
-                .arg("2");                 // Stereo - ADICIONADO!
+                .arg("2");               
         }
         _ => {}
     }
@@ -818,7 +756,6 @@ pub async fn convert_audio(
     if output.status.success() {
         log::info!("✅ Conversion complete: {:?}", output_path);
         
-        // ✅ ADICIONADO: Verificar se realmente é Vorbis
         let verify_cmd = Command::new("ffprobe")
             .args(&[
                 "-v", "error",

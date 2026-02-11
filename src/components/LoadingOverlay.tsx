@@ -15,8 +15,7 @@ export function LoadingOverlay({ visible, message = '📦 Generating...' }: Load
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           className="fixed inset-0 bg-black/85 flex flex-col justify-center items-center z-[2000] backdrop-blur-sm"
-        >
-          {/* SDV-style loading box */}
+        >        
           <motion.div
             initial={{ scale: 0, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
@@ -24,23 +23,19 @@ export function LoadingOverlay({ visible, message = '📦 Generating...' }: Load
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
             className="bg-gradient-to-b from-[#5c3d2e] to-[#3a2518] border-4 border-[#8b5a2b] rounded-xl p-8 sm:p-12 pixel-border flex flex-col items-center"
           >
-            {/* Animated Junimo circle */}
             <div className="relative w-24 h-24 mb-6">
-              {/* Spinning ring */}
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                 className="absolute inset-0 rounded-full border-4 border-[#8b5a2b] border-t-[#e0a030] border-r-[#56a037]"
               />
 
-              {/* Inner spinning ring */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
                 className="absolute inset-2 rounded-full border-3 border-[#5c3d2e] border-b-[#e07020] border-l-[#4a90d9]"
               />
 
-              {/* Center bouncing Junimo */}
               <motion.div
                 className="absolute inset-0 flex items-center justify-center"
                 animate={{
@@ -53,7 +48,6 @@ export function LoadingOverlay({ visible, message = '📦 Generating...' }: Load
               </motion.div>
             </div>
 
-            {/* Orbiting emojis */}
             {['🍃', '⭐', '🎶', '💚'].map((emoji, i) => (
               <motion.span
                 key={i}
@@ -86,7 +80,6 @@ export function LoadingOverlay({ visible, message = '📦 Generating...' }: Load
               </motion.span>
             ))}
 
-            {/* Message */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -96,7 +89,6 @@ export function LoadingOverlay({ visible, message = '📦 Generating...' }: Load
               {message}
             </motion.div>
 
-            {/* Bouncing dots */}
             <div className="flex gap-2 mt-4">
               {[0, 1, 2, 3, 4].map((i) => (
                 <motion.div
@@ -119,7 +111,6 @@ export function LoadingOverlay({ visible, message = '📦 Generating...' }: Load
             </div>
           </motion.div>
 
-          {/* Corner sparkles */}
           {[
             { top: '15%', left: '20%' },
             { top: '25%', right: '15%' },

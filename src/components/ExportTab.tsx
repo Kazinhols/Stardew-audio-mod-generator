@@ -63,7 +63,6 @@ export const ExportTab = memo(function ExportTab() {
 
   return (
     <div className="animate-fade-in space-y-4">
-      {/* Header */}
       <div className={headerClass}>
         <h3 className={headerTitleClass}>
           {tauri.isDesktop ? t('export.titleNative') : t('export.titleWeb')}
@@ -78,7 +77,6 @@ export const ExportTab = memo(function ExportTab() {
         )}
       </div>
 
-      {/* Copy audio option (desktop only) */}
       {tauri.isDesktop && (
         <div className={cn('p-4 rounded-xl border-2', theme === 'dark' ? 'bg-gray-700/50 border-gray-600' : 'bg-white/60 border-[#8b4513]/30')}>
           <label className={cn('flex items-center gap-3 cursor-pointer text-lg', theme === 'dark' ? 'text-white' : 'text-[#5c3d2e]')}>
@@ -98,7 +96,6 @@ export const ExportTab = memo(function ExportTab() {
         </div>
       )}
 
-      {/* Export buttons */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {tauri.isDesktop ? (
           <>
@@ -127,12 +124,10 @@ export const ExportTab = memo(function ExportTab() {
         )}
       </div>
 
-      {/* Tech badge */}
       <div className={cn('text-center text-xs p-2 rounded-lg font-mono opacity-70', theme === 'dark' ? 'bg-gray-800 text-gray-400' : 'bg-gray-200 text-gray-600')}>
         {tauri.isDesktop ? t('export.techNative') : t('export.techWeb')}
       </div>
 
-      {/* Previews */}
       {[
         { label: '📜 MANIFEST.JSON', json: manifestJson, field: 'manifest' },
         { label: '📄 CONTENT.JSON', json: contentJson, field: 'content' },

@@ -6,7 +6,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/utils/cn';
 import type { ConvertJob } from '@/types/audio';
 
-// Detecção robusta do Tauri (compatível com Tauri 2)
 function detectTauri(): boolean {
   if (typeof window === 'undefined') return false;
   const w = window as any;
@@ -21,7 +20,6 @@ function detectTauri(): boolean {
 async function invoke<T>(cmd: string, args?: Record<string, unknown>): Promise<T> {
   const w = window as any;
   
-  // Tenta diferentes formas de invocar (Tauri 2)
   if (w.__TAURI__?.core?.invoke) {
     return w.__TAURI__.core.invoke(cmd, args);
   }
@@ -42,7 +40,6 @@ export const AudioConverter = memo(function AudioConverter() {
   const { theme } = useTheme();
   const { language } = useLanguage();
 
-  // Detecta se está no Desktop dinamicamente
   const isDesktop = useMemo(() => detectTauri(), []);
 
   const convertFile = useCallback(async (filePath: string, fileName: string, targetFormat: 'ogg' | 'wav') => {
@@ -58,7 +55,6 @@ export const AudioConverter = memo(function AudioConverter() {
 
     if (isDesktop) {
       try {
-        // Simulate progress updates
         const progressInterval = setInterval(() => {
           dispatch({ type: 'UPDATE_CONVERT_JOB', payload: { id: jobId, updates: { progress: Math.min(90, (job.progress || 0) + 15) } } });
         }, 300);
@@ -82,7 +78,6 @@ export const AudioConverter = memo(function AudioConverter() {
         showToast(`❌ ${err}`, 'error');
       }
     } else {
-      // Web: show info only
       setTimeout(() => {
         dispatch({ type: 'UPDATE_CONVERT_JOB', payload: { id: jobId, updates: { status: 'error', error: language === 'pt' ? 'Conversão só disponível na versão Desktop' : 'Conversion only available in Desktop version' } } });
       }, 500);
@@ -130,8 +125,6 @@ export const AudioConverter = memo(function AudioConverter() {
           </motion.span>
         )}
       </h4>
-
-      {/* Info text */}
       <p className={cn('text-sm mb-3',
         theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
       )}>
@@ -144,7 +137,6 @@ export const AudioConverter = memo(function AudioConverter() {
             : '🌐 Conversion only available in Desktop version. On Web, use external tools like Audacity.')}
       </p>
 
-      {/* Convert buttons */}
       <div className="flex flex-wrap gap-2 mb-3">
         <motion.button
           onClick={() => convertSelected('ogg')}
@@ -193,7 +185,6 @@ export const AudioConverter = memo(function AudioConverter() {
         )}
       </div>
 
-      {/* Stats */}
       {convertJobs.length > 0 && (
         <div className={cn('flex gap-3 text-xs mb-3 px-2', theme === 'dark' ? 'text-gray-400' : 'text-gray-600')}>
           {activeJobs > 0 && <span className="text-amber-500">⏳ {activeJobs} {language === 'pt' ? 'convertendo' : 'converting'}</span>}
@@ -202,7 +193,6 @@ export const AudioConverter = memo(function AudioConverter() {
         </div>
       )}
 
-      {/* Job list */}
       <AnimatePresence>
         {convertJobs.length > 0 && (
           <motion.div
@@ -218,7 +208,6 @@ export const AudioConverter = memo(function AudioConverter() {
         )}
       </AnimatePresence>
 
-      {/* No selection hint */}
       {!hasSelectedFiles && scanResult && scanResult.files.length > 0 && (
         <div className={cn('text-center text-xs py-2 opacity-60',
           theme === 'dark' ? 'text-gray-500' : 'text-gray-500'
@@ -247,7 +236,6 @@ const ConvertJobRow = memo(function ConvertJobRow({
             : theme === 'dark' ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'
       )}
     >
-      {/* Status icon */}
       {job.status === 'converting' ? (
         <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>⏳</motion.span>
       ) : job.status === 'done' ? (
@@ -256,7 +244,6 @@ const ConvertJobRow = memo(function ConvertJobRow({
         <span>❌</span>
       )}
 
-      {/* File info */}
       <div className="flex-1 min-w-0">
         <div className={cn('font-medium truncate', theme === 'dark' ? 'text-white' : 'text-[#5c3d2e]')}>
           {job.sourceFile} → .{job.targetFormat}
@@ -269,7 +256,6 @@ const ConvertJobRow = memo(function ConvertJobRow({
         )}
       </div>
 
-      {/* Progress bar for converting */}
       {job.status === 'converting' && (
         <div className="w-20 h-2 rounded-full overflow-hidden bg-gray-300 dark:bg-gray-700">
           <motion.div
@@ -280,7 +266,6 @@ const ConvertJobRow = memo(function ConvertJobRow({
         </div>
       )}
 
-      {/* Remove button */}
       {job.status !== 'converting' && (
         <motion.button
           onClick={onRemove}

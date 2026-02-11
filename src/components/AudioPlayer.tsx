@@ -53,7 +53,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
   const { theme } = useTheme();
   const { language } = useLanguage();
 
-  // Use refs for audio state to avoid re-renders that break playback
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const urlRef = useRef<string | null>(null);
   const isPlayingRef = useRef(false);
@@ -66,7 +65,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
-  // Update progress using timeupdate event (more reliable than requestAnimationFrame)
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -134,7 +132,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
     };
   }, []);
 
-  // Load audio file
   useEffect(() => {
     let cancelled = false;
 
@@ -174,7 +171,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
       audio.oncanplaythrough = () => {
         if (cancelled) return;
         console.log('🎵 Can play through');
-        // Update duration again in case it wasn't available in loadedmetadata
         const dur = audio.duration;
         if (isFinite(dur) && !isNaN(dur) && dur > 0) {
           setDuration(dur);
@@ -193,7 +189,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
         const ext = getFileExtension(file.name);
 
         if (code === 4) {
-          // MEDIA_ERR_SRC_NOT_SUPPORTED
           if (ext === 'ogg') {
             errorText += language === 'pt'
               ? '\n\nO arquivo pode ser OGG Opus (não suportado pelo SDV). Converta para OGG Vorbis.'
@@ -232,7 +227,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
       const w = window as any;
       console.log('🎵 Loading:', file.name, file.path);
 
-      // Method 1: convertFileSrc (best - streams directly)
       try {
         if (w.__TAURI__?.core?.convertFileSrc) {
           const url = w.__TAURI__.core.convertFileSrc(file.path);
@@ -244,7 +238,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
         console.warn('🎵 convertFileSrc failed:', e);
       }
 
-      // Method 2: Read file bytes and create blob
       try {
         let rawData: unknown = null;
 
@@ -290,7 +283,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
         console.warn('🎵 Read bytes failed:', e);
       }
 
-      // Method 3: asset:// protocol
       try {
         const cleanPath = file.path.startsWith('/') ? file.path : `/${file.path}`;
         const url = `asset://localhost${cleanPath}`;
@@ -311,7 +303,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
     return () => { cancelled = true; };
   }, [file.path, language, volume]);
 
-  // Volume change (no re-render of audio element)
   const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseFloat(e.target.value);
     setVolume(v);
@@ -371,7 +362,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
         ? 'bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-500'
         : 'bg-gradient-to-r from-purple-50 to-blue-50 border-purple-400'
     )}>
-      {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <span className="text-2xl">{isPlaying ? '🔊' : '🎵'}</span>
@@ -392,24 +382,20 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
         )}>✕</button>
       </div>
 
-      {/* Error */}
       {error && (
         <div className={cn('p-3 rounded-lg mb-3 text-sm whitespace-pre-line', theme === 'dark' ? 'bg-red-900/30 text-red-300' : 'bg-red-50 text-red-600')}>
           ❌ {error}
         </div>
       )}
 
-      {/* Loading */}
       {loading && (
         <div className={cn('p-3 rounded-lg mb-3 text-center', theme === 'dark' ? 'text-gray-400' : 'text-gray-500')}>
           ⏳ {language === 'pt' ? 'Carregando áudio...' : 'Loading audio...'}
         </div>
       )}
 
-      {/* Controls */}
       {ready && !error && (
         <>
-          {/* Progress bar */}
           <div
             onClick={handleSeek}
             className={cn('h-4 rounded-full cursor-pointer mb-3 relative overflow-hidden group', theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200')}
@@ -418,12 +404,10 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
               className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full relative transition-none"
               style={{ width: `${progress}%` }}
             >
-              {/* Playhead dot */}
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </div>
 
-          {/* Buttons + Time + Volume */}
           <div className="flex items-center gap-3">
             <button onClick={togglePlay} className={cn(
               'w-11 h-11 rounded-full flex items-center justify-center text-xl text-white transition-all hover:scale-105 active:scale-95',
@@ -461,7 +445,6 @@ export function AudioPlayer({ file, onClose }: AudioPlayerProps) {
   );
 }
 
-// PlayButton - compact play/pause for file lists
 interface PlayButtonProps {
   onClick: () => void;
   isPlaying: boolean;

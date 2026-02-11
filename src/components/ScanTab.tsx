@@ -84,12 +84,10 @@ export const ScanTab = memo(function ScanTab() {
     dispatch({ type: 'DESELECT_ALL_SCAN_FILES' });
   }, [selectedScanFiles, scanResult, dispatch, showToast, t, detectCategory]);
 
-  // Recalculate stats considering WAV as valid
   const stats = useMemo(() => {
     if (!scanResult) return null;
     let validCount = 0;
     
-    // Count WAVs as valid along with OGG Vorbis
     scanResult.files.forEach(f => {
       const fmt = getFileFormat(f.name);
       if ((fmt === 'OGG' && f.is_vorbis) || fmt === 'WAV') {
@@ -99,7 +97,7 @@ export const ScanTab = memo(function ScanTab() {
 
     return { 
       total: scanResult.files.length, 
-      valid: validCount, // Now includes WAV
+      valid: validCount,
       invalid: scanResult.files.length - validCount, 
       size: scanResult.total_size 
     };
@@ -141,8 +139,7 @@ export const ScanTab = memo(function ScanTab() {
       )}
 
       {playingFile && <AudioPlayer file={playingFile} onClose={() => setPlayingFile(null)} />}
-
-      {/* Conversor de Áudio */}
+      
       {scanResult && scanResult.files.length > 0 && <AudioConverter />}
 
       {stats && (
@@ -185,12 +182,10 @@ export const ScanTab = memo(function ScanTab() {
             {scanResult.files.map((file, i) => {
               const fmt = getFileFormat(file.name);
               
-              // Definições de validade
               const isOggVorbis = fmt === 'OGG' && file.is_vorbis;
               const isWav = fmt === 'WAV';
               const isValid = isOggVorbis || isWav;
               
-              // Estado de erro (somente se não for OGG válido nem WAV)
               const isOggNotVorbis = fmt === 'OGG' && !file.is_vorbis;
               const isInvalid = !isValid;
 

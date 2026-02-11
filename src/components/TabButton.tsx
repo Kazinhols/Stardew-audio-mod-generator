@@ -47,7 +47,6 @@ export function TabButton({ label, icon, active, onClick, counter, shortcut }: T
         </motion.span>
         <span className="hidden sm:inline text-shadow-pixel">{label}</span>
 
-        {/* Counter badge */}
         <AnimatePresence mode="wait">
           {counter !== undefined && counter > 0 && (
             <motion.span
@@ -71,7 +70,6 @@ export function TabButton({ label, icon, active, onClick, counter, shortcut }: T
         </AnimatePresence>
       </span>
 
-      {/* Active glow indicator */}
       {active && (
         <motion.div
           layoutId="activeTabGlow"
@@ -85,7 +83,6 @@ export function TabButton({ label, icon, active, onClick, counter, shortcut }: T
         />
       )}
 
-      {/* Pixel sparkle on active */}
       {active && (
         <motion.span
           className="absolute -top-1 -right-1 text-xs pointer-events-none"
@@ -100,7 +97,6 @@ export function TabButton({ label, icon, active, onClick, counter, shortcut }: T
         </motion.span>
       )}
 
-      {/* Shortcut tooltip */}
       {shortcut && (
         <div
           className={cn(

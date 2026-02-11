@@ -110,12 +110,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         draft.dirty = false;
         break;
 
-      // ── Player ──────────────────────────────
       case 'SET_PLAYER':
         Object.assign(draft.player, action.payload);
         break;
 
-      // ── Converter ───────────────────────────
       case 'ADD_CONVERT_JOB':
         draft.convertJobs.push(action.payload);
         break;
@@ -134,7 +132,6 @@ export function appReducer(state: AppState, action: AppAction): AppState {
         draft.convertJobs = [];
         break;
 
-      // ── Scan file selection ─────────────────
       case 'TOGGLE_SCAN_FILE': {
         const idx = draft.selectedScanFiles.indexOf(action.payload);
         if (idx === -1) {
@@ -147,13 +144,10 @@ export function appReducer(state: AppState, action: AppAction): AppState {
 
       case 'SELECT_ALL_SCAN_FILES':
         if (draft.scanResult) {
-          // Seleciona arquivos OGG Vorbis válidos OU arquivos não-OGG (que podem ser convertidos)
           draft.selectedScanFiles = draft.scanResult.files
             .filter(f => {
               const ext = f.name.split('.').pop()?.toUpperCase() || '';
               const isOgg = ext === 'OGG';
-              // Se for OGG, só seleciona se for Vorbis
-              // Se não for OGG, seleciona (pode ser convertido)
               return (isOgg && f.is_vorbis) || !isOgg;
             })
             .map(f => f.name);

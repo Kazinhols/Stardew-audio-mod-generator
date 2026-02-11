@@ -20,7 +20,6 @@ export async function generateAndDownloadZipWeb(
     i18nFolder.file('default.json', JSON.stringify(i18n, null, 4));
   }
 
-  // Create empty assets folder
   folder.folder('assets');
 
   const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });

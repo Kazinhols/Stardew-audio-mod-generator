@@ -48,7 +48,6 @@ export function Toast({ message, type, visible }: ToastProps) {
             style.border
           )}
         >
-          {/* Icon with bounce */}
           <motion.span
             initial={{ rotate: -180, scale: 0 }}
             animate={{ rotate: 0, scale: [0, 1.3, 1] }}
@@ -58,10 +57,8 @@ export function Toast({ message, type, visible }: ToastProps) {
             {style.icon}
           </motion.span>
 
-          {/* Message with pixel shadow */}
           <span className="text-shadow-pixel">{message}</span>
 
-          {/* Decorative sparkle */}
           <motion.span
             className="text-sm"
             animate={{

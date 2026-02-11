@@ -2,7 +2,6 @@ import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/contexts/ThemeContext';
 
-// ─── Floating Particles (Fireflies / Stars / Leaves) ──────────
 export const FloatingParticles = memo(function FloatingParticles() {
   const { theme } = useTheme();
 
@@ -46,7 +45,6 @@ export const FloatingParticles = memo(function FloatingParticles() {
   );
 });
 
-// ─── Junimo Mascot (bouncy character in corners) ──────────────
 export const JunimoMascot = memo(function JunimoMascot() {
   const colors = ['🟢', '🔵', '🟣', '🟡', '🔴'];
   const junimo = colors[Math.floor(Date.now() / 60000) % colors.length];
@@ -73,8 +71,7 @@ export const JunimoMascot = memo(function JunimoMascot() {
     >
       <span className="text-3xl drop-shadow-lg" style={{ filter: 'drop-shadow(2px 2px 0 rgba(0,0,0,0.3))' }}>
         {junimo === '🟢' ? '💚' : junimo === '🔵' ? '💙' : junimo === '🟣' ? '💜' : junimo === '🟡' ? '💛' : '❤️'}
-      </span>
-      {/* Sparkle above Junimo */}
+      </span>     
       <motion.span
         className="absolute -top-3 -right-1 text-xs"
         animate={{
@@ -94,13 +91,11 @@ export const JunimoMascot = memo(function JunimoMascot() {
   );
 });
 
-// ─── Seasonal Corner Decorations ──────────────────────────────
 export const SeasonalCorners = memo(function SeasonalCorners() {
   const { theme } = useTheme();
 
   return (
     <>
-      {/* Top-left corner */}
       <div className="fixed top-0 left-0 pointer-events-none z-10 opacity-40">
         <motion.span
           className="text-2xl block"
@@ -112,7 +107,6 @@ export const SeasonalCorners = memo(function SeasonalCorners() {
         </motion.span>
       </div>
 
-      {/* Top-right corner */}
       <div className="fixed top-0 right-0 pointer-events-none z-10 opacity-30">
         <motion.div
           className="flex gap-1 p-2"
@@ -124,7 +118,6 @@ export const SeasonalCorners = memo(function SeasonalCorners() {
         </motion.div>
       </div>
 
-      {/* Bottom-left */}
       <div className="fixed bottom-8 left-2 pointer-events-none z-10 opacity-30">
         <motion.span
           className="text-xl"
@@ -141,7 +134,6 @@ export const SeasonalCorners = memo(function SeasonalCorners() {
   );
 });
 
-// ─── Animated Wood Divider ────────────────────────────────────
 export const WoodDivider = memo(function WoodDivider({ className }: { className?: string }) {
   const { theme } = useTheme();
 
@@ -165,7 +157,6 @@ export const WoodDivider = memo(function WoodDivider({ className }: { className?
   );
 });
 
-// ─── Pixel Gold Coin Counter ──────────────────────────────────
 export const GoldCounter = memo(function GoldCounter({ value, label }: { value: number; label: string }) {
   const { theme } = useTheme();
 
@@ -198,7 +189,6 @@ export const GoldCounter = memo(function GoldCounter({ value, label }: { value: 
   );
 });
 
-// ─── Stardew-style Day/Night indicator ────────────────────────
 export const DayNightIndicator = memo(function DayNightIndicator() {
   const { theme, toggleTheme } = useTheme();
 
@@ -213,7 +203,6 @@ export const DayNightIndicator = memo(function DayNightIndicator() {
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.95 }}
     >
-      {/* Stars in night mode */}
       {theme === 'dark' && (
         <>
           <span className="absolute top-1 left-1 text-[6px] animate-twinkle" style={{ animationDuration: '2s' }}>✦</span>
@@ -221,7 +210,6 @@ export const DayNightIndicator = memo(function DayNightIndicator() {
         </>
       )}
 
-      {/* Clouds in day mode */}
       {theme !== 'dark' && (
         <motion.span
           className="absolute top-0.5 right-2 text-[8px] text-white"
@@ -232,7 +220,6 @@ export const DayNightIndicator = memo(function DayNightIndicator() {
         </motion.span>
       )}
 
-      {/* Sun/Moon toggle orb */}
       <motion.div
         className="absolute top-0.5 w-5 h-5 rounded-full flex items-center justify-center text-sm"
         animate={{ x: theme === 'dark' ? 28 : 2 }}

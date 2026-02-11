@@ -91,6 +91,38 @@ Crie, valide e exporte — tudo em uma interface moderna e intuitiva.
 
 ---
 
+### 🎵 Configuração do FFmpeg
+
+Para utilizar as funcionalidades de reprodutor de áudio e conversor automático (WAV ↔ OGG) na versão Desktop, é necessário ter o FFmpeg instalado e acessível no sistema.
+
+## 🪟 Windows
+```bash
+winget install "FFmpeg (Essentials)"
+``` 
+
+## 🐧 Linux
+Instale via terminal usando o gerenciador de pacotes da sua distribuição:
+
+Ubuntu / Debian / Mint:
+```bash
+sudo apt update && sudo apt install ffmpeg
+```
+
+Fedora:
+```bash
+sudo dnf install ffmpeg
+```
+Arch Linux / Manjaro:
+```bash
+sudo pacman -S ffmpeg
+``` 
+
+## 🍎 macOS
+```bash
+brew install ffmpeg
+``` 
+
+---
 ### 📦 Exportação e Ajuda
 
 | 🚀 Interface de Exportação | ❓ Central de Ajuda |

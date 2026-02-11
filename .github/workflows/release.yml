@@ -61,25 +61,32 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd src-tauri/target/release/bundle/appimage/
-          APPIMAGE=$(find . -name "*.AppImage" | head -1)
+          APPIMAGE=$(ls -1 *.AppImage 2>/dev/null | head -1)
           if [ -n "$APPIMAGE" ]; then
-            APPIMAGE_NAME=$(basename "$APPIMAGE")
             chmod +x "$APPIMAGE"
             "./$APPIMAGE" --appimage-extract
 
-            rm -f squashfs-root/usr/lib/libcairo*
-            rm -f squashfs-root/usr/lib/libwayland*
-            rm -f squashfs-root/usr/lib/libEGL*
-            rm -f squashfs-root/usr/lib/libGL*
-            rm -f squashfs-root/usr/lib/libepoxy*
+            # Replace AppRun to use system libs
+            cat > squashfs-root/AppRun << 'APPRUN_EOF'
+          #!/bin/bash
+          SELF=$(readlink -f "$0")
+          HERE=${SELF%/*}
+
+          # Use system libs to avoid GLib/GStreamer version conflicts
+          export LD_LIBRARY_PATH=/usr/lib:${HERE}/usr/lib
+          export GDK_PIXBUF_MODULEDIR=$(find /usr/lib -name "loaders" -path "*/gdk-pixbuf*" 2>/dev/null | head -1)
+          export GDK_PIXBUF_MODULE_FILE=$(find /usr/lib -name "loaders.cache" -path "*/gdk-pixbuf*" 2>/dev/null | head -1)
+
+          exec "${HERE}/usr/bin/stardew-audio-mod" "$@"
+          APPRUN_EOF
+            chmod +x squashfs-root/AppRun
 
             rm "$APPIMAGE"
             wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
             chmod +x appimagetool
-            ARCH=x86_64 ./appimagetool --appimage-extract-and-run squashfs-root "$APPIMAGE_NAME"
+            ARCH=x86_64 ./appimagetool --appimage-extract-and-run squashfs-root "$APPIMAGE"
             rm -rf squashfs-root appimagetool
 
-            # Replace the AppImage in the release using gh cli
-            gh release delete-asset "${{ github.ref_name }}" "$APPIMAGE_NAME" -y || true
-            gh release upload "${{ github.ref_name }}" "$APPIMAGE_NAME" --clobber
+            gh release delete-asset "${{ github.ref_name }}" "$APPIMAGE" -y || true
+            gh release upload "${{ github.ref_name }}" "$APPIMAGE" --clobber
           fi

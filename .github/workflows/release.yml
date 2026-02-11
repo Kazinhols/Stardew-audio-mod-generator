@@ -54,3 +54,36 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+
+      - name: Fix AppImage for Arch-based distros
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          cd src-tauri/target/release/bundle/appimage/
+          APPIMAGE=$(find . -name "*.AppImage" | head -1)
+          if [ -n "$APPIMAGE" ]; then
+            chmod +x "$APPIMAGE"
+            "./$APPIMAGE" --appimage-extract
+
+            # Remove libs that conflict with Arch-based distros
+            rm -f squashfs-root/usr/lib/libcairo*
+            rm -f squashfs-root/usr/lib/libwayland*
+            rm -f squashfs-root/usr/lib/libEGL*
+            rm -f squashfs-root/usr/lib/libGL*
+            rm -f squashfs-root/usr/lib/libepoxy*
+
+            # Repackage
+            rm "$APPIMAGE"
+            wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
+            chmod +x appimagetool
+            ARCH=x86_64 ./appimagetool --appimage-extract-and-run squashfs-root "$APPIMAGE"
+            rm -rf squashfs-root appimagetool
+          fi
+
+      - name: Upload fixed AppImage
+        if: matrix.platform == 'ubuntu-22.04'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: src-tauri/target/release/bundle/appimage/*.AppImage
+          fail_on_unmatched_files: false

@@ -71,14 +71,17 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
+      # AQUI ESTA A CORREÇÃO PRINCIPAL:
+      # Removemos o releaseId para ele APENAS compilar e não tentar subir nada.
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__ 
+          tagName: v__VERSION__
           args: ${{ matrix.args }}
 
+      # Este passo faz o upload manualmente pegando qualquer arquivo gerado
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')

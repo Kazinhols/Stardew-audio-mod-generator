@@ -177,7 +177,7 @@ Se você deseja contribuir com o código ou compilar por conta própria:
 
 1. Clone o repositório:
  ```bash
-   git clone [https://github.com/Kazinhols/stardew-audio-mod-generator.git](https://github.com/Kazinhols/stardew-audio-mod-generator.git)
+   git clone https://github.com/Kazinhols/stardew-audio-mod-generator.git
    cd stardew-audio-mod-generator
 ``` 
 2. Instale as dependências:

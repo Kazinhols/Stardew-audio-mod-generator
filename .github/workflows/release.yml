@@ -48,10 +48,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: ${{ github.ref_name }} 
+          tagName: ${{ github.ref_name }}
           releaseName: "Stardew Audio Mod ${{ github.ref_name }}"
-          releaseBody: "Release gerada automaticamente pelo GitHub Actions."
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-          includeRelease: true
+          includeRelease: true 
+          includeInternalIdentifer: true

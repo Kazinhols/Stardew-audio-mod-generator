@@ -57,33 +57,29 @@ jobs:
 
       - name: Fix AppImage for Arch-based distros
         if: matrix.platform == 'ubuntu-22.04'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd src-tauri/target/release/bundle/appimage/
           APPIMAGE=$(find . -name "*.AppImage" | head -1)
           if [ -n "$APPIMAGE" ]; then
+            APPIMAGE_NAME=$(basename "$APPIMAGE")
             chmod +x "$APPIMAGE"
             "./$APPIMAGE" --appimage-extract
 
-            # Remove libs that conflict with Arch-based distros
             rm -f squashfs-root/usr/lib/libcairo*
             rm -f squashfs-root/usr/lib/libwayland*
             rm -f squashfs-root/usr/lib/libEGL*
             rm -f squashfs-root/usr/lib/libGL*
             rm -f squashfs-root/usr/lib/libepoxy*
 
-            # Repackage
             rm "$APPIMAGE"
             wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
             chmod +x appimagetool
-            ARCH=x86_64 ./appimagetool --appimage-extract-and-run squashfs-root "$APPIMAGE"
+            ARCH=x86_64 ./appimagetool --appimage-extract-and-run squashfs-root "$APPIMAGE_NAME"
             rm -rf squashfs-root appimagetool
-          fi
 
-      - name: Upload fixed AppImage
-        if: matrix.platform == 'ubuntu-22.04'
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          files: src-tauri/target/release/bundle/appimage/*.AppImage
-          fail_on_unmatched_files: false
+            # Replace the AppImage in the release using gh cli
+            gh release delete-asset "${{ github.ref_name }}" "$APPIMAGE_NAME" -y || true
+            gh release upload "${{ github.ref_name }}" "$APPIMAGE_NAME" --clobber
+          fi

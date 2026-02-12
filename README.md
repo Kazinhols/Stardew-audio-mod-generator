@@ -208,3 +208,11 @@ O projeto utiliza uma arquitetura híbrida com **React** no frontend e **Rust** 
 │ • i18n (PT-BR / EN-US)                │   dados    │ • notify (file watcher)               │
 │ • React.lazy + Suspense (tabs)        │  de volta  │ • FFmpeg (conversão OGG ↔ WAV)        │
 └───────────────────────────────────────┘            └───────────────────────────────────────┘  
+
+---
+
+## 📝 Licença
+
+Distribuído sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+Copyright © 2026 Kazinhols.

@@ -93,7 +93,7 @@ Crie, valide e exporte — tudo em uma interface moderna e intuitiva.
 
 ### 🎵 Configuração do FFmpeg
 
-Para utilizar as funcionalidades de reprodutor de áudio e conversor automático (WAV ↔ OGG) na versão Desktop, é necessário ter o FFmpeg instalado e acessível no sistema.
+Para utilizar as funcionalidades de reprodutor de áudio e conversor (WAV ↔ OGG) na versão Desktop, é necessário ter o FFmpeg instalado e acessível no sistema.
 
 ## 🪟 Windows
 ```bash
